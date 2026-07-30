@@ -16,8 +16,10 @@ j'avais déjà créé une clé gpg pour signer mes commits gitlab sur wsl, donc 
 ### le fameux schema
 
 je vais le faire ok ??
-dans le biref ça nous parle de sku donc c'est pour les vm ça, mais je vois pas à quel moment je vais utiliser une vm là ?
-    - ok j'ai capté que les sku c'est pas que pour les vm mais aussi les services managés, donc va falloir que je regarde quels sont les moins cher que je peux utiliser dans cette subscription.
-je vois pas encore trop à quoi ça sert redis, ni pourquoi on a besoin d'un storage account et d'une DB postgre donc je vais demander à mon ia chinoise préférée, deepseek.
-    - ok j'ai mieux compris l'architecture backend, c'est vrai qu'au final y avait tout dans le readme du backend, et j'ai compris comment ça fonctionnait l'architecture CORS + clé api
-j'ai cependant un peu mal à la tête et je suis fatigué là, donc je vais prendre mon temps pour commencer le schema et je le finirais demain matin je pense
+dans le biref ça nous parle de sku donc c'est pour les vm ça, mais je vois pas à quel moment je vais utiliser une vm là ?  
+    - ok j'ai capté que les sku c'est pas que pour les vm mais aussi les services managés, donc va falloir que je regarde quels sont les moins cher que je peux utiliser dans cette subscription.  
+je vois pas encore trop à quoi ça sert redis, ni pourquoi on a besoin d'un storage account et d'une DB postgre donc je vais demander à mon ia chinoise préférée, deepseek.  
+    - ok j'ai mieux compris l'architecture backend, c'est vrai qu'au final y avait tout dans le readme du backend, et j'ai compris comment ça fonctionnait l'architecture CORS + clé api  
+j'ai cependant un peu mal à la tête et je suis fatigué là, donc je vais prendre mon temps pour commencer le schema et je le finirais demain matin je pense  ça correspond à quoi le CORS + clé api ?
+
+![schema v1](schema_v1.png)
