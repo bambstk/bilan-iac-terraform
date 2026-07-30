@@ -1,0 +1,4 @@
+# Syntaxe : <pattern de fichier>  <@utilisateur ou @org/équipe>
+
+# Par défaut : tout changement requiert une review de ces personnes
+*                          @bambstk
