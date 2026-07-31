@@ -32,13 +32,26 @@ data "azurerm_service_plan" "shared" {
   resource_group_name = var.shared_rg_name
 }
 
-# ── Storage  ─────────────────────────────────────────────────────────
+# ── Front  ─────────────────────────────────────────────────────────
 
-# module "storage" {
-#   source = "./modules/storage"
+module "front" {
+  source = "./modules/front"
 
-#   owner               = var.owner
-#   resource_group_name = data.azurerm_resource_group.rg.name
-#   location            = var.location
-#   tags                = local.tags
-# }
+  owner               = var.owner
+  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = var.location
+  tags                = merge(local.tags, { ressource = "front" })
+}
+
+
+# ── Back  ─────────────────────────────────────────────────────────
+
+module "back" {
+  source = "./modules/back"
+
+  owner               = var.owner
+  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = var.location
+  service_plan_id     = data.azurerm_service_plan.shared.id
+  tags                = merge(local.tags, { ressource = "back" })
+}

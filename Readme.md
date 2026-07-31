@@ -24,3 +24,9 @@ Pour commencer je vais créer le storage account qui contiendra le container ave
 Puis un storage container dans le storage account ([la doc ici](https://learn.microsoft.com/en-us/cli/azure/storage/container?view=azure-cli-latest#az-storage-container-create))  
 
 Pour trouver quoi mettre dans les .tf je vais me baser sur la [doc terraform](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs) pour commencer.  
+
+Pour créer l'infra en local, toujours:  
+```terraform init``` (à refaire à chaque ajout de module)  
+```terraform validate``` (+ ```terraform fmt``` pour que les fichiers soit toujours bien joli au cas où)  
+```terraform plan```  
+```terraform apply```
