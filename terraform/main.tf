@@ -13,7 +13,6 @@ locals {
       managed_by  = "terraform"
       environment = "bilan-iac"
       owner       = var.owner
-      gang        = "disco-empañada-super-ultra-megakill-dos-tres-quatro-dvlpdvlpdvlp-afterlife"
     },
     var.tags
   )
