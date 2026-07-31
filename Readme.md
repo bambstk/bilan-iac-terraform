@@ -1,11 +1,10 @@
 # Alors... je sais pas encore comment je vais structurer cette doc, on va voir
 
-### quelques choix
+### Architecture Decision Records
 
-je vais les mettre en ADR plus tard:  
-- github plutot que gitlab, raison personnelle, j'utilise déjà gitlab avec les briefs de steve, donc j'ai bien envie d'utiliser github ici pour rester haitué aux deux + j'ai pas configuré la verification des commits sur github alors que je l'ai déjà fait sur gitlab donc bien envie de voir comment faire ici, j'ai déjà l'habitude de dependabot en plus.  
-- AKS ou Service Managé, je pars sur du service managé, pcq pour ce bilan je prefere rester sur une nouvelle technologie à la fois (terraform), et je me concentrerais sur kubernetes plus tard.
-- je vais devoir faire des choix de reseau plus tard aussi, mais ce sera plus tard ça
+[github plutot que gitlab](./ADR-git.md)  
+[services managés plutôt qu'AKS](./ADR-service.md)  
+[le reseau dans azure je comprends pas bien encore, je ferais ça au fur et à mesure]
 
 ### signer les commits
 
@@ -15,11 +14,6 @@ j'avais déjà créé une clé gpg pour signer mes commits gitlab sur wsl, donc 
 
 ### le fameux schema
 
-je vais le faire ok ??
-dans le biref ça nous parle de sku donc c'est pour les vm ça, mais je vois pas à quel moment je vais utiliser une vm là ?  
-    - ok j'ai capté que les sku c'est pas que pour les vm mais aussi les services managés, donc va falloir que je regarde quels sont les moins cher que je peux utiliser dans cette subscription.  
-je vois pas encore trop à quoi ça sert redis, ni pourquoi on a besoin d'un storage account et d'une DB postgre donc je vais demander à mon ia chinoise préférée, deepseek.  
-    - ok j'ai mieux compris l'architecture backend, c'est vrai qu'au final y avait tout dans le readme du backend, et j'ai compris comment ça fonctionnait l'architecture CORS + clé api  
-j'ai cependant un peu mal à la tête et je suis fatigué là, donc je vais prendre mon temps pour commencer le schema et je le finirais demain matin je pense  ça correspond à quoi le CORS + clé api ?
+Pour l'instant la façon dont je vois l'architecture que je vais déployer c'est comme ça, on verra si ça marche vraiment, tout ça  
 
-![schema v1](schema_v1.png)
+![schema v1](./schema_v1.png)
