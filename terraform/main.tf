@@ -40,7 +40,7 @@ module "front" {
   owner               = var.owner
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = var.location
-  tags                = merge(local.tags, { ressource = "front" })
+  tags                = merge(local.tags, { component = "front" })
 }
 
 
@@ -53,5 +53,62 @@ module "back" {
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = var.location
   service_plan_id     = data.azurerm_service_plan.shared.id
-  tags                = merge(local.tags, { ressource = "back" })
+  tags                = merge(local.tags, { component = "back" })
+}
+
+# ── Network  ───────────────────────────────────────────────────────
+
+module "network" {
+  source = "./modules/network"
+
+  owner               = var.owner
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  tags                = var.tags
+}
+
+# ── postgresql  ─────────────────────────────────────────────────────
+
+module "postgresql" {
+  source = "./modules/postgresql"
+
+  owner                  = var.owner
+  resource_group_name    = var.resource_group_name
+  location               = var.location
+  tags                   = var.tags
+  administrator_login    = "ok"
+  administrator_password = "ok"
+}
+
+# ── redis  ───────────────────────────────────────────────────────────
+
+module "redis" {
+  source = "./modules/redis"
+
+  owner               = var.owner
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  tags                = var.tags
+}
+
+# ── storage  ───────────────────────────────────────────────────────────
+
+module "storage" {
+  source = "./modules/storage"
+
+  owner               = var.owner
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  tags                = var.tags
+}
+
+# ── keyvault  ───────────────────────────────────────────────────────────
+
+module "keyvault" {
+  source = "./modules/keyvault"
+
+  owner               = var.owner
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  tags                = var.tags
 }

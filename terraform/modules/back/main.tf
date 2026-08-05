@@ -9,7 +9,7 @@ terraform {
 }
 
 resource "azurerm_linux_web_app" "back" {
-  name                = "front-${var.owner}-bilan"
+  name                = "back-${var.owner}-bilan"
   resource_group_name = var.resource_group_name
   location            = var.location
   service_plan_id     = var.service_plan_id

@@ -5,8 +5,11 @@
 # Complétez au fur et à mesure que vous créez les ressources.
 # ──────────────────────────────────────────────────────────────────────────────
 
-# URL de l'App Service
-# output "app_service_url" {
-#   description = "URL publique de l'App Service"
-#   value       = "https://${module.app_service.default_hostname}"
-# }
+# URLs du front et du back
+output "front_url" {
+  value = "https://${module.front.default_hostname}"
+}
+
+output "back_url" {
+  value = "https://${module.back.default_hostname}"
+}
