@@ -42,9 +42,3 @@ variable "administrator_login" {
   type        = string
   default     = "admin"
 }
-
-variable "administrator_password" {
-  description = "PostgreSQL admin password"
-  type        = string
-  sensitive   = true
-}
