@@ -11,13 +11,13 @@ terraform {
 data "azurerm_client_config" "current" {}
 
 resource "azurerm_key_vault" "kv" {
-  name                       = "kv-${var.owner}-bilan"
-  location                   = var.location
-  resource_group_name        = var.resource_group_name
-  tenant_id                  = data.azurerm_client_config.current.tenant_id
-  sku_name                   = "standard"
-  rbac_authorization_enabled = false
-  purge_protection_enabled   = false
+  name                          = "kv-${var.owner}-bilan"
+  location                      = var.location
+  resource_group_name           = var.resource_group_name
+  tenant_id                     = data.azurerm_client_config.current.tenant_id
+  sku_name                      = "standard"
+  rbac_authorization_enabled    = false
+  purge_protection_enabled      = false
   public_network_access_enabled = false
 
   # Donne les droits de gestion au principal qui exécute Terraform
@@ -34,6 +34,41 @@ resource "azurerm_key_vault" "kv" {
     storage_permissions = [
       "Get", "List", "Set", "Delete", "Backup", "Restore", "Recover", "Purge"
     ]
+  }
+
+  tags = var.tags
+}
+
+# Zone DNS privée pour Key Vault
+resource "azurerm_private_dns_zone" "kv" {
+  name                = "privatelink.vaultcore.azure.net"
+  resource_group_name = var.resource_group_name
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "kv" {
+  name                  = "kv-${var.owner}-bilan"
+  resource_group_name   = var.resource_group_name
+  private_dns_zone_name = azurerm_private_dns_zone.kv.name
+  virtual_network_id    = var.vnet_id
+  registration_enabled  = false
+}
+
+resource "azurerm_private_endpoint" "kv" {
+  name                = "pe-kv-${var.owner}-bilan"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  subnet_id           = var.subnet_id
+
+  private_service_connection {
+    name                           = "kv-connection"
+    private_connection_resource_id = azurerm_key_vault.kv.id
+    subresource_names              = ["vault"]
+    is_manual_connection           = false
+  }
+
+  private_dns_zone_group {
+    name                 = "kv-dns-group"
+    private_dns_zone_ids = [azurerm_private_dns_zone.kv.id]
   }
 
   tags = var.tags

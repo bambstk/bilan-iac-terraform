@@ -7,7 +7,7 @@
 
 # URLs du front et du back
 output "front_url" {
-  value = "https://${module.front.default_hostname}"
+  value = "https://${module.front.front_default_hostname}"
 }
 
 output "back_url" {

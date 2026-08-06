@@ -1,9 +1,11 @@
-variable "owner"                 { type = string }
-variable "resource_group_name"   { type = string }
-variable "location"              { type = string }
-variable "tags"                  { type = map(string) }
-variable "administrator_login"   { type = string }
-variable "administrator_password" { 
-    type = string
-    sensitive = true 
-    }
+variable "owner" { type = string }
+variable "resource_group_name" { type = string }
+variable "location" { type = string }
+variable "tags" { type = map(string) }
+variable "administrator_login" { type = string }
+variable "administrator_password" {
+  type      = string
+  sensitive = true
+}
+variable "subnet_id" { type = string }
+variable "vnet_id" { type = string }

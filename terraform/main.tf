@@ -49,11 +49,15 @@ module "front" {
 module "back" {
   source = "./modules/back"
 
-  owner               = var.owner
-  resource_group_name = data.azurerm_resource_group.rg.name
-  location            = var.location
-  service_plan_id     = data.azurerm_service_plan.shared.id
-  tags                = merge(local.tags, { component = "back" })
+  owner                 = var.owner
+  resource_group_name   = data.azurerm_resource_group.rg.name
+  location              = var.location
+  service_plan_id       = data.azurerm_service_plan.shared.id
+  integration_subnet_id = module.network.integration_subnet_id
+  db_host               = "oui"
+  kv_id                 = "oui"
+  frontend_url          = module.front.front_default_hostname
+  tags                  = merge(local.tags, { component = "back" })
 }
 
 # ── Network  ───────────────────────────────────────────────────────
@@ -64,7 +68,7 @@ module "network" {
   owner               = var.owner
   resource_group_name = var.resource_group_name
   location            = var.location
-  tags                = var.tags
+  tags                = merge(local.tags, { component = "network" })
 }
 
 # ── postgresql  ─────────────────────────────────────────────────────
@@ -75,9 +79,11 @@ module "postgresql" {
   owner                  = var.owner
   resource_group_name    = var.resource_group_name
   location               = var.location
-  tags                   = var.tags
   administrator_login    = "ok"
   administrator_password = "ok"
+  subnet_id              = module.network.private_endpoints_subnet_id
+  vnet_id                = module.network.vnet_id
+  tags                   = merge(local.tags, { component = "postSQL" })
 }
 
 # ── redis  ───────────────────────────────────────────────────────────
@@ -88,7 +94,9 @@ module "redis" {
   owner               = var.owner
   resource_group_name = var.resource_group_name
   location            = var.location
-  tags                = var.tags
+  subnet_id           = module.network.private_endpoints_subnet_id
+  vnet_id             = module.network.vnet_id
+  tags                = merge(local.tags, { component = "redis" })
 }
 
 # ── storage  ───────────────────────────────────────────────────────────
@@ -99,7 +107,9 @@ module "storage" {
   owner               = var.owner
   resource_group_name = var.resource_group_name
   location            = var.location
-  tags                = var.tags
+  subnet_id           = module.network.private_endpoints_subnet_id
+  vnet_id             = module.network.vnet_id
+  tags                = merge(local.tags, { component = "storage" })
 }
 
 # ── keyvault  ───────────────────────────────────────────────────────────
@@ -110,5 +120,7 @@ module "keyvault" {
   owner               = var.owner
   resource_group_name = var.resource_group_name
   location            = var.location
-  tags                = var.tags
+  subnet_id           = module.network.private_endpoints_subnet_id
+  vnet_id             = module.network.vnet_id
+  tags                = merge(local.tags, { component = "keyvault" })
 }
