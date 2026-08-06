@@ -13,7 +13,7 @@ resource "azurerm_linux_web_app" "back" {
   resource_group_name = var.resource_group_name
   location            = var.location
   service_plan_id     = var.service_plan_id
-  https_only          = "true"
+  https_only          = true
 
   virtual_network_subnet_id = var.integration_subnet_id
 
@@ -21,11 +21,10 @@ resource "azurerm_linux_web_app" "back" {
     type = "SystemAssigned"
   }
 
-  app_settings = {
-    "API_KEY"               = "@Microsoft.KeyVault(SecretUri=${var.kv_id})"
-    "SPRING_DATASOURCE_URL" = "jdbc:postgresql://${var.db_host}:5432/mydb"
-    # ...
-  }
+  # app_settings = {
+  #   "API_KEY"               = "@Microsoft.KeyVault(SecretUri=${var.kv_id})"
+  #   "SPRING_DATASOURCE_URL" = "jdbc:postgresql://${var.db_host}:5432/mydb"
+  # }
 
   site_config {
     application_stack {

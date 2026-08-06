@@ -9,3 +9,4 @@ variable "administrator_password" {
 }
 variable "subnet_id" { type = string }
 variable "vnet_id" { type = string }
+variable "kv_id" { type = string}

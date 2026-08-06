@@ -30,3 +30,7 @@ Pour créer l'infra en local, toujours:
 ```terraform validate``` (+ ```terraform fmt``` pour que les fichiers soit toujours bien joli au cas où)  
 ```terraform plan```  
 ```terraform apply```
+
+Pour passer à la creation de l'infra via github actions j'ai décidé de remettre mon .tfvars dans le gitignore, donc pour les variables qui étaient dedans j'ai fais 2 choses :  
+    - pour 3 d'entre elles j'ai crée des variables dans le repo github et de ce que j'ai compris [ici](https://dev.to/bhanufyi/effective-terraform-variable-management-in-github-actions-488l) si je crée de variables d'environement qui commencent par ```TF_VAR_``` dans la CI et que je leur assigne la valeur stocké dans mes variables github ça devrait faire la même chose que le fichier .tfvars
+    - pour le mot de passe je vais le faire generer directement dans terraform avec le module random, comme ça je pourrais le transmettre au modules qui ont en besoin tranquillo et le stocker dans le keyvault directement, en plus les mdp genérés automatiquement c'est pas mal niveau sécurité, bref je m'y met.

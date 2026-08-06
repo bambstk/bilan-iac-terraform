@@ -5,7 +5,23 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~> 4.0"
     }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.9"
+    }
   }
+}
+
+resource "random_password" "adminpwd" {
+  length  = 24
+  special = true
+}
+
+# c'est ici que je vais stocker le mot de passe
+resource "azurerm_key_vault_secret" "postgres_admin_password" {
+  name         = "postgres-admin-password"
+  value        = random_password.adminpwd.result
+  key_vault_id = var.kv_id
 }
 
 resource "azurerm_postgresql_flexible_server" "postgres" {
@@ -15,7 +31,7 @@ resource "azurerm_postgresql_flexible_server" "postgres" {
 
   version                       = "16"
   administrator_login           = var.administrator_login
-  administrator_password        = var.administrator_password
+  administrator_password        = random_password.adminpwd.result
   public_network_access_enabled = false
 
   storage_mb = 32768

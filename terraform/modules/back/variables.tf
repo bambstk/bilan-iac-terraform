@@ -1,9 +1,9 @@
-variable "owner" { type = string }
-variable "resource_group_name" { type = string }
-variable "service_plan_id" { type = string }
-variable "tags" { type = map(string) }
-variable "location" { type = string }
+variable "owner"                 { type = string }
+variable "resource_group_name"   { type = string }
+variable "service_plan_id"       { type = string }
+variable "tags"                  { type = map(string) }
+variable "location"              { type = string }
 variable "integration_subnet_id" { type = string }
-variable "frontend_url" { type = string }
-variable "db_host" { type = string }
-variable "kv_id" { type = string }
+variable "frontend_url"          { type = string }
+variable "db_host"               { type = string }
+variable "kv_id"                 { type = string }

@@ -54,8 +54,8 @@ module "back" {
   location              = var.location
   service_plan_id       = data.azurerm_service_plan.shared.id
   integration_subnet_id = module.network.integration_subnet_id
-  db_host               = "oui"
-  kv_id                 = "oui"
+  db_host               = module.postgresql.psql_fqdn
+  kv_id                 = module.keyvault.kv_id
   frontend_url          = module.front.front_default_hostname
   tags                  = merge(local.tags, { component = "back" })
 }
@@ -79,10 +79,11 @@ module "postgresql" {
   owner                  = var.owner
   resource_group_name    = var.resource_group_name
   location               = var.location
-  administrator_login    = "ok"
-  administrator_password = "ok"
+  administrator_login    = var.administrator_login
+  administrator_password = var.administrator_password
   subnet_id              = module.network.private_endpoints_subnet_id
   vnet_id                = module.network.vnet_id
+  kv_id                  = module.keyvault.kv_id
   tags                   = merge(local.tags, { component = "postSQL" })
 }
 
