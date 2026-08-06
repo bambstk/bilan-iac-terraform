@@ -26,11 +26,10 @@ data "azurerm_resource_group" "rg" {
   name = var.resource_group_name
 }
 
-# Plan App Service partagé (dans un Resource Group séparé)
-data "azurerm_service_plan" "shared" {
-  name                = var.shared_plan_name
-  resource_group_name = var.shared_rg_name
-}
+# data "azurerm_service_plan" "shared" {
+#   name                = var.shared_plan_name
+#   resource_group_name = var.shared_rg_name
+# }
 
 # ── Front  ─────────────────────────────────────────────────────────
 
@@ -52,7 +51,7 @@ module "back" {
   owner                 = var.owner
   resource_group_name   = data.azurerm_resource_group.rg.name
   location              = var.location
-  service_plan_id       = data.azurerm_service_plan.shared.id
+  service_plan_id       = module.network.backend_plan_id
   integration_subnet_id = module.network.integration_subnet_id
   db_host               = module.postgresql.psql_fqdn
   kv_id                 = module.keyvault.kv_id

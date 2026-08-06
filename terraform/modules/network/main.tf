@@ -8,6 +8,15 @@ terraform {
   }
 }
 
+
+resource "azurerm_service_plan" "backend" {
+  name                = "plan-${var.owner}-bilan"
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  os_type             = "Linux"
+  sku_name            = "B1" # ça a l'air d'etre le moins cher hihi
+  tags                = var.tags
+}
 resource "azurerm_virtual_network" "vnet" {
   name                = "vnet-${var.owner}-bilan"
   location            = var.location

@@ -37,6 +37,10 @@ resource "azurerm_postgresql_flexible_server" "postgres" {
   storage_mb = 32768
   sku_name   = "B_Standard_B1ms"
 
+    lifecycle {
+    ignore_changes = [zone]
+  }
+
   tags = var.tags
 }
 
@@ -65,7 +69,7 @@ resource "azurerm_private_endpoint" "postgres" {
   private_service_connection {
     name                           = "psql-connection"
     private_connection_resource_id = azurerm_postgresql_flexible_server.postgres.id
-    subresource_names              = ["postgresql"] # obligatoire
+    subresource_names              = ["postgresqlServer"]
     is_manual_connection           = false
   }
 

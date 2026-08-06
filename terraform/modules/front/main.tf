@@ -11,6 +11,6 @@ terraform {
 resource "azurerm_static_web_app" "front" {
   name                = "front-${var.owner}-bilan"
   resource_group_name = var.resource_group_name
-  location            = var.location
+  location            = "westeurope"
   tags                = var.tags
 }

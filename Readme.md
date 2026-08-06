@@ -34,3 +34,6 @@ Pour créer l'infra en local, toujours:
 Pour passer à la creation de l'infra via github actions j'ai décidé de remettre mon .tfvars dans le gitignore, donc pour les variables qui étaient dedans j'ai fais 2 choses :  
     - pour 3 d'entre elles j'ai crée des variables dans le repo github et de ce que j'ai compris [ici](https://dev.to/bhanufyi/effective-terraform-variable-management-in-github-actions-488l) si je crée de variables d'environement qui commencent par ```TF_VAR_``` dans la CI et que je leur assigne la valeur stocké dans mes variables github ça devrait faire la même chose que le fichier .tfvars
     - pour le mot de passe je vais le faire generer directement dans terraform avec le module random, comme ça je pourrais le transmettre au modules qui ont en besoin tranquillo et le stocker dans le keyvault directement, en plus les mdp genérés automatiquement c'est pas mal niveau sécurité, bref je m'y met.
+
+j'ai lancé le apply, comme prévu un peu de troubleshooting, mais tout se régle. CEPENDANT, comment ça le plan partagé peux avoir que 2 vnet ???
+eh bien je dois créer un nouveau un nouveau plan (ou laisser tout le back en publique ce qui est ok aussi étant donné que c'est jsute un tp et que c'est justifié par le fait que le plan partagé soit trop fatigué, mais j'ai envie de créer un petit plan quand même)
