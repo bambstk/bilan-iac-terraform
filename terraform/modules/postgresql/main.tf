@@ -3,7 +3,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 4.0"
+      version = "~> 5.0"
     }
     random = {
       source  = "hashicorp/random"
@@ -53,8 +53,7 @@ resource "azurerm_private_dns_zone" "postgres" {
 # Lien entre la zone DNS et le VNet
 resource "azurerm_private_dns_zone_virtual_network_link" "postgres" {
   name                  = "psql-${var.owner}-bilan"
-  resource_group_name   = var.resource_group_name
-  private_dns_zone_name = azurerm_private_dns_zone.postgres.name
+  private_dns_zone_id   = azurerm_private_dns_zone.postgres.id
   virtual_network_id    = var.vnet_id
   registration_enabled  = false
 }

@@ -121,5 +121,6 @@ module "keyvault" {
   location            = var.location
   subnet_id           = module.network.private_endpoints_subnet_id
   vnet_id             = module.network.vnet_id
+  public_access       = var.kv_public_access
   tags                = merge(local.tags, { component = "keyvault" })
 }

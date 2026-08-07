@@ -37,3 +37,5 @@ Pour passer à la creation de l'infra via github actions j'ai décidé de remett
 
 j'ai lancé le apply, comme prévu un peu de troubleshooting, mais tout se régle. CEPENDANT, comment ça le plan partagé peux avoir que 2 vnet ???
 eh bien je dois créer un nouveau un nouveau plan (ou laisser tout le back en publique ce qui est ok aussi étant donné que c'est jsute un tp et que c'est justifié par le fait que le plan partagé soit trop fatigué, mais j'ai envie de créer un petit plan quand même)
+
+Pour l'oidc de github action ça me demandais mon user ID (incomprehensible, mais bref) et c'est facilement trouvable grace à l'api github [https://api.github.com/users/bambstk]

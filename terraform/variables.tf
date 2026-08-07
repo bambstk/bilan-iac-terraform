@@ -42,3 +42,9 @@ variable "administrator_login" {
   type        = string
   default     = "admin"
 }
+
+variable "kv_public_access" {
+  description = "value of 'azurerm_key_vault' parameter 'public_network_access_enabled'"
+  type        = bool
+  default     = true
+}

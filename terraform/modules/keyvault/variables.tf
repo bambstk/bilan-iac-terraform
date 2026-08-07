@@ -4,3 +4,4 @@ variable "location" { type = string }
 variable "tags" { type = map(string) }
 variable "subnet_id" { type = string }
 variable "vnet_id" { type = string }
+variable "public_access" { type = bool }

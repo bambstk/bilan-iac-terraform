@@ -1,0 +1,64 @@
+name: Terraform Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action à exécuter'
+        required: true
+        type: choice
+        options:
+          - apply
+          - destroy
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: terraform
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: hashicorp/setup-terraform@v4
+      - name: Azure login
+        uses: azure/login@v3
+        with:
+          client-id: ${{ vars.CLIENT_ID }}
+          tenant-id: ${{ vars.TENANT_ID }}
+          subscription-id: ${{ vars.SUBSCRIPTION_ID }}
+    
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        id: plan
+        run: |
+            terraform plan -no-color -input=false -detailed-exitcode -out=tfplan
+            exit_code=$?
+            if [ $exit_code -eq 2 ]; then
+            echo "Changement de plan !! Cependant ok, pas erreur"
+            elif [ $exit_code -ne 0 ]; then
+            echo "erreur !!! erreur !!!! code de sortie $exit_code !!!!!"
+            exit $exit_code
+            fi
+        env:
+          TF_VAR_administrator_login: ${{ vars.ADMIN_LOGIN }}
+          TF_VAR_owner: ${{ vars.OWNER }}
+          TF_VAR_resource_group_name: ${{ vars.RG_NAME }}
+
+      - name: Terraform Apply
+        if: inputs.action == 'apply'
+        run: terraform apply tfplan
+
+      - name: Terraform Destroy
+        if: inputs.action == 'destroy'
+        run: terraform destroy -auto-approve

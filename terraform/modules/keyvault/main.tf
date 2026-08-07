@@ -3,7 +3,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 4.0"
+      version = "~> 5.0"
     }
   }
 }
@@ -18,7 +18,7 @@ resource "azurerm_key_vault" "kv" {
   sku_name                      = "standard"
   rbac_authorization_enabled    = false
   purge_protection_enabled      = false
-  public_network_access_enabled = false
+  public_network_access_enabled = var.public_access
 
   # Donne les droits de gestion au principal qui exécute Terraform
   access_policy {
@@ -47,8 +47,7 @@ resource "azurerm_private_dns_zone" "kv" {
 
 resource "azurerm_private_dns_zone_virtual_network_link" "kv" {
   name                  = "kv-${var.owner}-bilan"
-  resource_group_name   = var.resource_group_name
-  private_dns_zone_name = azurerm_private_dns_zone.kv.name
+  private_dns_zone_id = azurerm_private_dns_zone.kv.id
   virtual_network_id    = var.vnet_id
   registration_enabled  = false
 }
