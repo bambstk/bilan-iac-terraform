@@ -1,46 +1,67 @@
-# Alors... je sais pas encore comment je vais structurer cette doc, on va voir
+# Infrastructure as Code – Bilan IAC
 
-### Architecture Decision Records
+Déploiement automatisé d’une infrastructure Azure non‑production composée de services managés (App Service, Static Web App, PostgreSQL, Redis, Storage, Key Vault).  
+Le provisionnement est entièrement réalisé avec Terraform et orchestré via GitHub Actions.
 
-[github plutot que gitlab](./ADR-git.md)  
-[services managés plutôt qu'AKS](./ADR-service.md)  
-[le reseau dans azure je comprends pas bien encore, je ferais ça au fur et à mesure]
+## Architecture
 
-### Signer les commits
+![Schéma d'architecture](./schema_v2.png)
 
-j'avais déjà créé une clé gpg pour signer mes commits gitlab sur wsl, donc j'ai décidé d'utiliser la même clé gpg pour github, étant donné que sur mon terminal cette clé elle signe mes commit git tout court, les commandes pour retrouver la clé publique (à rentrer dans les paramatres de mon profil github) c'est :  
-``` gpg -k``` pour avoir la liste de mes clés gpg (j'en avais une seule ici)  
-```gpg --armor --export <id-de-la-cle>``` export pour afficher, et armor pour que ce soit pas en binaire, que ce soit lisible
+## Décisions d’architecture
 
-### Le fameux schema
+- [GitHub plutôt que GitLab](./ADR-git.md)
+- [Services managés plutôt qu’AKS](./ADR-service.md)
 
-Pour l'instant la façon dont je vois l'architecture que je vais déployer c'est comme ça, on verra si ça marche vraiment, tout ça  
+## Structure du dépôt
 
-![schema v1](./schema_v2.png)
+```
+└── terraform/
+│   ├── main.tf                 # Point d'entrée racine
+│   ├── variables.tf            # Déclarations des variables
+│   ├── outputs.tf              # Sorties exposées (URLs, noms…)
+│   ├── providers.tf            # Provider AzureRM + configuration OIDC
+│   ├── backend.tf              # Backend distant (Azure Blob Storage)
+│   └── modules/
+│       ├── front/              # Static Web App
+│       ├── back/               # App Service Linux (backend)
+│       ├── network/            # Réseau virtuel + sous‑réseaux
+│       ├── postgresql/         # PostgreSQL Flexible Server
+│       ├── redis/              # Azure Managed Redis
+│       ├── storage/            # Compte de stockage
+│       └── keyvault/           # Key Vault
+└─ .github/workflows/      # Pipeline CI/CD
+```
 
-### Terraform
+## Prérequis
 
-Pour commencer je vais créer le storage account qui contiendra le container avec le state distant de terraform, j'ai besoin de le faire qu'une seule fois et [la doc](https://learn.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-create) dis bien comment faire.  
-Puis un storage container dans le storage account ([la doc ici](https://learn.microsoft.com/en-us/cli/azure/storage/container?view=azure-cli-latest#az-storage-container-create))  
+- Compte Azure avec les droits suffisants
+- Stockage de l’état distant déjà créé
+- Service principal configuré pour l’authentification OIDC avec GitHub Actions
+- Variables GitHub Actions renseignées (voir CI/CD)
 
-Pour trouver quoi mettre dans les .tf je vais me baser sur la [doc terraform](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs) pour commencer.  (malheuresement je trouve qu'on a pas assez le temps pour faire tous les main.tf à la main, donc j'ai envoyé les docs que j'ai trouvé à deepseek pour qu'il me genere les main.tf, j'aurais bien aimé digger les docs pour savoir ce qu'il est possible de mettre dedans, mais pas possible)
+## Déploiement local
 
-Pour créer l'infra en local, toujours:  
-```terraform init``` (à refaire à chaque ajout de module)  
-```terraform validate``` (+ ```terraform fmt``` pour que les fichiers soit toujours bien joli au cas où)  
-```terraform plan```  
-```terraform apply```
+```bash
+cd terraform
+terraform init
+terraform validate
+terraform fmt
+terraform plan -out=tfplan
+terraform apply tfplan
+```
 
-Pour passer à la creation de l'infra via github actions j'ai décidé de remettre mon .tfvars dans le gitignore, donc pour les variables qui étaient dedans j'ai fais 2 choses :  
-    - pour 3 d'entre elles j'ai crée des variables dans le repo github et de ce que j'ai compris [ici](https://dev.to/bhanufyi/effective-terraform-variable-management-in-github-actions-488l) si je crée de variables d'environement qui commencent par ```TF_VAR_``` dans la CI et que je leur assigne la valeur stocké dans mes variables github ça devrait faire la même chose que le fichier .tfvars
-    - pour le mot de passe je vais le faire generer directement dans terraform avec le module random, comme ça je pourrais le transmettre au modules qui ont en besoin tranquillo et le stocker dans le keyvault directement, en plus les mdp genérés automatiquement c'est pas mal niveau sécurité, bref je m'y met.
+Les variables sensibles (owner, resource group, login administrateur PostgreSQL) sont à renseigner dans un fichier `terraform.tfvars` (non versionné) ou via des variables d’environnement `TF_VAR_...`.
 
-j'ai lancé le apply, comme prévu un peu de troubleshooting, mais tout se régle. CEPENDANT, comment ça le plan partagé peux avoir que 2 vnet ???
-eh bien je dois créer un nouveau un nouveau plan (ou laisser tout le back en publique ce qui est ok aussi étant donné que c'est jsute un tp et que c'est justifié par le fait que le plan partagé soit trop fatigué, mais j'ai envie de créer un petit plan quand même)
+## CI/CD avec GitHub Actions
 
-Pour l'oidc de github action ça me demandais mon user ID (incomprehensible, mais bref) et c'est facilement trouvable grace à l'api github [https://api.github.com/users/bambstk]  
-ça demandé l'id du repo aussi je l'ai ignoré, mais ça a pas réussi la connection, et j'ai trouvé l'id dans le message d'erreur (après ça doit être trouvable sur l'api facielment aussi)
+Le workflow `Terraform Deploy` est déclenché manuellement (`workflow_dispatch`) avec le choix entre `apply` et `destroy`.
 
-j'ai eu quelques problème de lock sur terraform avec mes TF_VAR que j'oubliais partout et les workflow que j'ai du cancel sans que ça libere le lock, donc la commande magique pour éteindre le lock c'est ```terraform force-unlock <numero-de-lock>```
+- Authentification OIDC : les secrets `CLIENT_ID`, `TENANT_ID`, `SUBSCRIPTION_ID` doivent être configurés dans les `vars` du dépôt.
+- Variables Terraform : les valeurs `OWNER`, `RG_NAME`, `ADMIN_LOGIN` sont passées via `TF_VAR_` dans l’environnement du job.
+- Le mot de passe administrateur PostgreSQL est généré automatiquement par Terraform (`random_password`) et stocké dans Key Vault.
 
-un keyvault ça se supprime pas directement, il faut attednre 90 jours pendant lesquels il est encore possible de le recuperer, donc chiant pour les apply après les destroy, donc il faut un nom random pour le vault.
+## Gestion des secrets et du Key Vault
+
+- Le mot de passe administrateur de PostgreSQL est généré aléatoirement par la ressource `random_password` et stocké dans le Key Vault via `azurerm_key_vault_secret`.
+- De base il était prévu que Key Vault soit en accès public pendant la création des secrets, puis repasse en privé après l’étape d’initialisation, mais ça créait des problèmes alors il reste publique pour l'instant.
+- **Soft delete** : un Key Vault supprimé reste récupérable pendant 90 jours, ce qui bloque la recréation avec le même nom. Pour cette raison, un suffixe aléatoire est ajouté au nom du coffre (`random_string`).
