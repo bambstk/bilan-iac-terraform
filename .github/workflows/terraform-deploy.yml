@@ -41,6 +41,10 @@ jobs:
 
       - name: Update Key Vault access policy
         run: terraform apply -target=module.keyvault.azurerm_key_vault.kv -auto-approve
+        env:
+          TF_VAR_administrator_login: ${{ vars.ADMIN_LOGIN }}
+          TF_VAR_owner: ${{ vars.OWNER }}
+          TF_VAR_resource_group_name: ${{ vars.RG_NAME }}
 
       - name: Terraform Plan
         id: plan
