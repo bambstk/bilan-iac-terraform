@@ -53,6 +53,17 @@ resource "azurerm_key_vault" "kv" {
   tags = var.tags
 }
 
+resource "random_password" "backend_api_key" {
+  length  = 32
+  special = false
+}
+
+resource "azurerm_key_vault_secret" "backend_api_key" {
+  name         = "backend-api-key"
+  value        = random_password.backend_api_key.result
+  key_vault_id = azurerm_key_vault.kv.id
+}
+
 # Zone DNS privée pour Key Vault
 resource "azurerm_private_dns_zone" "kv" {
   name                = "privatelink.vaultcore.azure.net"
