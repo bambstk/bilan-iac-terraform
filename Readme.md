@@ -40,3 +40,7 @@ eh bien je dois créer un nouveau un nouveau plan (ou laisser tout le back en pu
 
 Pour l'oidc de github action ça me demandais mon user ID (incomprehensible, mais bref) et c'est facilement trouvable grace à l'api github [https://api.github.com/users/bambstk]  
 ça demandé l'id du repo aussi je l'ai ignoré, mais ça a pas réussi la connection, et j'ai trouvé l'id dans le message d'erreur (après ça doit être trouvable sur l'api facielment aussi)
+
+j'ai eu quelques problème de lock sur terraform avec mes TF_VAR que j'oubliais partout et les workflow que j'ai du cancel sans que ça libere le lock, donc la commande magique pour éteindre le lock c'est ```terraform force-unlock <numero-de-lock>```
+
+un keyvault ça se supprime pas directement, il faut attednre 90 jours pendant lesquels il est encore possible de le recuperer, donc chiant pour les apply après les destroy, donc il faut un nom random pour le vault.

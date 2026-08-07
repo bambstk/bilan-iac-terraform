@@ -5,13 +5,23 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~> 5.0"
     }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.9"
+    }
   }
 }
 
 data "azurerm_client_config" "current" {}
 
+resource "random_string" "kv_suffix" {
+  length  = 4
+  special = false
+  upper   = false
+}
+
 resource "azurerm_key_vault" "kv" {
-  name                          = "kv-${var.owner}-bilan"
+  name                          = "kv-${var.owner}-bilan-${random_string.kv_suffix.result}"
   location                      = var.location
   resource_group_name           = var.resource_group_name
   tenant_id                     = data.azurerm_client_config.current.tenant_id
@@ -36,6 +46,10 @@ resource "azurerm_key_vault" "kv" {
     ]
   }
 
+  lifecycle {
+    ignore_changes = [name]
+  }
+  
   tags = var.tags
 }
 
