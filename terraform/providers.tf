@@ -18,6 +18,10 @@ provider "azurerm" {
   # ARM_CLIENT_ID, ARM_TENANT_ID, ARM_SUBSCRIPTION_ID injected by GitHub Actions
   use_oidc = true
 
+  key_vault {
+    purge_soft_delete_on_destroy = false  
+   }
+
   features {
     resource_group {
       prevent_deletion_if_contains_resources = true
