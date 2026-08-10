@@ -15,7 +15,7 @@ terraform {
 data "azurerm_client_config" "current" {}
 
 resource "random_string" "kv_suffix" {
-  length  = 3
+  length  = 4
   special = false
   upper   = false
 }
