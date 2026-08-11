@@ -61,6 +61,7 @@ module "back" {
   frontend_url          = module.front.front_default_hostname
   administrator_login   = var.administrator_login
   redis_hostname        = module.redis.redis_hostname
+  redis_password        = module.redis.primary_access_key
   redis_port            = module.redis.redis_port
   storage_account_name  = module.storage.storage_account_name
   kv_uri                = module.keyvault.kv_uri

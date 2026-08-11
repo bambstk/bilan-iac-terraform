@@ -12,3 +12,4 @@ variable "kv_uri"                { type = string }
 variable "redis_hostname"        { type = string }
 variable "redis_port"            { type = string }
 variable "storage_account_name"  { type = string }
+variable "redis_password"        { type = string }

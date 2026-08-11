@@ -28,7 +28,7 @@ resource "azurerm_linux_web_app" "back" {
     "APP_CORS_ALLOWED_ORIGINS"    = "https://${var.frontend_url}"
     "REDIS_HOSTNAME"             = var.redis_hostname
     "REDIS_PORT"                 = var.redis_port
-    "REDIS_PASSWORD"             = "@Microsoft.KeyVault(SecretUri=${var.kv_uri}secrets/redis-password/)"
+    "REDIS_PASSWORD"             = var.redis_password
     "REDIS_SSL_ENABLED"          = "true"
     "BACKEND_API_KEY"            = "@Microsoft.KeyVault(SecretUri=${var.kv_uri}secrets/backend-api-key/)"
     "STORAGE_ACCOUNT_NAME"       = var.storage_account_name
