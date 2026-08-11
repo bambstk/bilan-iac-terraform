@@ -21,11 +21,20 @@ resource "azurerm_linux_web_app" "back" {
     type = "SystemAssigned"
   }
 
-  # app_settings = {
-  #   "API_KEY"               = "@Microsoft.KeyVault(SecretUri=${var.kv_id})"
-  #   "SPRING_DATASOURCE_URL" = "jdbc:postgresql://${var.db_host}:5432/mydb"
-  # }
-
+  app_settings = {
+    "SPRING_DATASOURCE_URL"      = "jdbc:postgresql://${var.db_host}:5432/azurequiz"
+    "SPRING_DATASOURCE_USERNAME"  = var.administrator_login
+    "SPRING_DATASOURCE_PASSWORD"  = "@Microsoft.KeyVault(SecretUri=${var.kv_uri}secrets/postgres-admin-password/)"
+    "APP_CORS_ALLOWED_ORIGINS"    = "https://${var.frontend_url}"
+    "REDIS_HOSTNAME"             = var.redis_hostname
+    "REDIS_PORT"                 = var.redis_port
+    "REDIS_PASSWORD"             = "@Microsoft.KeyVault(SecretUri=${var.kv_uri}secrets/redis-password/)"
+    "REDIS_SSL_ENABLED"          = "true"
+    "BACKEND_API_KEY"            = "@Microsoft.KeyVault(SecretUri=${var.kv_uri}secrets/backend-api-key/)"
+    "STORAGE_ACCOUNT_NAME"       = var.storage_account_name
+    "STORAGE_CONTAINER_NAME"     = "java-uploads-${var.owner}"
+    "SPRING_PROFILES_ACTIVE"     = "prod"
+  }
   site_config {
     application_stack {
       java_server         = "JAVA"

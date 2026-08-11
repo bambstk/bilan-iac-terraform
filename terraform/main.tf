@@ -26,6 +26,8 @@ data "azurerm_resource_group" "rg" {
   name = var.resource_group_name
 }
 
+data "azurerm_client_config" "current" {}
+
 # data "azurerm_service_plan" "shared" {
 #   name                = var.shared_plan_name
 #   resource_group_name = var.shared_rg_name
@@ -57,7 +59,13 @@ module "back" {
   db_host               = module.postgresql.psql_fqdn
   kv_id                 = module.keyvault.kv_id
   frontend_url          = module.front.front_default_hostname
-  tags                  = merge(local.tags, { component = "back" })
+  administrator_login   = var.administrator_login
+  redis_hostname        = module.redis.redis_hostname
+  redis_port            = module.redis.redis_port
+  storage_account_name  = module.storage.storage_account_name
+  kv_uri                = module.keyvault.kv_uri
+
+  tags = merge(local.tags, { component = "back" })
 }
 
 # ── Network  ───────────────────────────────────────────────────────
@@ -124,4 +132,14 @@ module "keyvault" {
   vnet_id             = module.network.vnet_id
   public_access       = var.kv_public_access
   tags                = merge(local.tags, { component = "keyvault" })
+}
+
+# ── jesaismemeplus  ───────────────────────────────────────────────────
+
+resource "azurerm_key_vault_access_policy" "app_service" {
+  key_vault_id = module.keyvault.kv_id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = module.back.identity_principal_id
+
+  secret_permissions = ["Get", "List"]
 }
