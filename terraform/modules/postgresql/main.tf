@@ -44,6 +44,11 @@ resource "azurerm_postgresql_flexible_server" "postgres" {
   tags = var.tags
 }
 
+resource "azurerm_postgresql_flexible_server_database" "azurequiz" {
+  name      = "azurequiz"
+  server_id = azurerm_postgresql_flexible_server.postgres.id
+}
+
 # Zone DNS privée pour PostgreSQL Flexible Server
 resource "azurerm_private_dns_zone" "postgres" {
   name                = "privatelink.postgres.database.azure.com"
