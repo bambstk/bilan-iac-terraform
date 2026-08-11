@@ -14,3 +14,9 @@ resource "azurerm_static_web_app" "front" {
   location            = "westeurope"
   tags                = var.tags
 }
+
+resource "azurerm_key_vault_secret" "swa_token" {
+  name         = "swa-deployment-token"
+  value        = azurerm_static_web_app.front.api_key
+  key_vault_id = var.kv_id
+}

@@ -39,6 +39,7 @@ module "front" {
   owner               = var.owner
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = var.location
+  kv_id               = module.keyvault.kv_id
   tags                = merge(local.tags, { component = "front" })
 }
 
@@ -75,14 +76,14 @@ module "network" {
 module "postgresql" {
   source = "./modules/postgresql"
 
-  owner                  = var.owner
-  resource_group_name    = var.resource_group_name
-  location               = var.location
-  administrator_login    = var.administrator_login
-  subnet_id              = module.network.private_endpoints_subnet_id
-  vnet_id                = module.network.vnet_id
-  kv_id                  = module.keyvault.kv_id
-  tags                   = merge(local.tags, { component = "postSQL" })
+  owner               = var.owner
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  administrator_login = var.administrator_login
+  subnet_id           = module.network.private_endpoints_subnet_id
+  vnet_id             = module.network.vnet_id
+  kv_id               = module.keyvault.kv_id
+  tags                = merge(local.tags, { component = "postSQL" })
 }
 
 # ── redis  ───────────────────────────────────────────────────────────
