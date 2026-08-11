@@ -39,7 +39,7 @@ j'ai lancé le apply, comme prévu un peu de troubleshooting, mais tout se régl
 eh bien je dois créer un nouveau un nouveau plan (ou laisser tout le back en publique ce qui est ok aussi étant donné que c'est jsute un tp et que c'est justifié par le fait que le plan partagé soit trop fatigué, mais j'ai envie de créer un petit plan quand même)
 
 Pour l'oidc de github action ça me demandais mon user ID (incomprehensible, mais bref) et c'est facilement trouvable grace à l'api github [https://api.github.com/users/bambstk]  
-ça demandé l'id du repo aussi je l'ai ignoré, mais ça a pas réussi la connection, et j'ai trouvé l'id dans le message d'erreur (après ça doit être trouvable sur l'api facielment aussi)
+ça demandé l'id du repo aussi je l'ai ignoré, mais ça a pas réussi la connection, et j'ai trouvé l'id dans le message d'erreur (après ça doit être trouvable sur l'api facielment aussi), c'est ça l'url pour les repos : [https://api.github.com/repos/bambstk/bilan-iac-frontend]
 
 j'ai eu quelques problème de lock sur terraform avec mes TF_VAR que j'oubliais partout et les workflow que j'ai du cancel sans que ça libere le lock, donc la commande magique pour éteindre le lock c'est ```terraform force-unlock <numero-de-lock>```
 
