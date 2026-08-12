@@ -38,7 +38,7 @@ resource "azurerm_postgresql_flexible_server" "postgres" {
   sku_name   = "B_Standard_B1ms"
 
     lifecycle {
-    ignore_changes = [zone, administrator_password]
+    ignore_changes = [zone]
   }
 
   tags = var.tags
