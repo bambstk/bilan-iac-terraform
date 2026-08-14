@@ -18,6 +18,7 @@ resource "azurerm_managed_redis" "redis" {
 
   default_database {
     clustering_policy = "NoCluster"
+    access_keys_authentication_enabled   = true
   }
 
   tags = var.tags

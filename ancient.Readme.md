@@ -44,3 +44,17 @@ Pour l'oidc de github action ça me demandais mon user ID (incomprehensible, mai
 j'ai eu quelques problème de lock sur terraform avec mes TF_VAR que j'oubliais partout et les workflow que j'ai du cancel sans que ça libere le lock, donc la commande magique pour éteindre le lock c'est ```terraform force-unlock <numero-de-lock>```
 
 un keyvault ça se supprime pas directement, il faut attednre 90 jours pendant lesquels il est encore possible de le recuperer, donc chiant pour les apply après les destroy, donc il faut un nom random pour le vault.
+
+une fois que tout est crée je dois mettre des droit sur le storage à mon back :
+
+```bash
+PS C:\Users\Utilisateur\espace_de_travail\Bilan_iac_cd\bilan-iac-terraform\terraform> az webapp identity show --name back-sbaivloann-bilan --resource-group lzniberRG --query principalId -o tsv
+784e05b9-c39e-4358-89c4-af83eeb47248
+PS C:\Users\Utilisateur\espace_de_travail\Bilan_iac_cd\bilan-iac-terraform\terraform> az storage account show --name stsbaivloannbilan --resource-group lzniberRG --query id -o tsv
+/subscriptions/5e683e0f-b00c-48d6-9769-5aaf598de8f1/resourceGroups/lzniberRG/providers/Microsoft.Storage/storageAccounts/stsbaivloannbilan
+PS C:\Users\Utilisateur\espace_de_travail\Bilan_iac_cd\bilan-iac-terraform\terraform> az role assignment create --assignee 784e05b9-c39e-4358-89c4-af83eeb47248 --scope /subscriptions/5e683e0f-b00c-48d6-9769-5aaf598de8f1/resourceGroups/lzniberRG/providers/Microsoft.Storage/storageAccounts/stsbaivloannbilan --role "Storage Blob Data Contributor"
+```  
+dans le vrai .md je le mettrais proprement
+
+et pour me donner la permission de voir ce qu'il y a dans le vault (quand il a été crée par le service principal) :  
+```az keyvault set-policy --name kv-sbaivloann-bilan-mou --object-id 0be1d50e-08f9-4990-af02-84aacbf5f6ed --secret-permissions get list```

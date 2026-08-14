@@ -60,6 +60,11 @@ Le workflow `Terraform Deploy` est déclenché manuellement (`workflow_dispatch`
 - Variables Terraform : les valeurs `OWNER`, `RG_NAME`, `ADMIN_LOGIN` sont passées via `TF_VAR_` dans l’environnement du job.
 - Le mot de passe administrateur PostgreSQL est généré automatiquement par Terraform (`random_password`) et stocké dans Key Vault.
 
+Une fois que le déploiement à été réalisé, il faut donner au backend l'autorisation des gérer le conteneur de stockage manuellement, car le service principal qui s'occupe du déploiement n'a pas le droit de gerer les droits:  
+```az webapp identity show --name <nom-du-back> --resource-group <groupe-de-ressource> --query principalId -o tsv``` (recuper l'id du back)  
+```az storage account show --name <nm-du-storage> --resource-group <groupe-de-ressource> --query id -o tsv``` (recupere le scope du storage)  
+```az role assignment create --assignee <ID-du-back> --scope <scope-du-storage> --role "Storage Blob Data Contributor"```
+
 ## Gestion des secrets et du Key Vault
 
 - Le mot de passe administrateur de PostgreSQL est généré aléatoirement par la ressource `random_password` et stocké dans le Key Vault via `azurerm_key_vault_secret`.
