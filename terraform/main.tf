@@ -146,8 +146,8 @@ resource "azurerm_key_vault_access_policy" "app_service" {
 }
 
 # ── Rôle Storage Blob Data Contributor pour l'App Service sur le compte de stockage ─────
-resource "azurerm_role_assignment" "app_service_storage" {
-  scope                = module.storage.storage_id
-  role_definition_name = "Storage Blob Data Contributor"
-  principal_id         = module.back.identity_principal_id
-}
+# resource "azurerm_role_assignment" "app_service_storage" {
+#   scope                = module.storage.storage_id
+#   role_definition_name = "Storage Blob Data Contributor"
+#   principal_id         = module.back.identity_principal_id
+# }
