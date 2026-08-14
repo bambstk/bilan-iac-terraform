@@ -135,7 +135,7 @@ module "keyvault" {
   tags                = merge(local.tags, { component = "keyvault" })
 }
 
-# ── jesaismemeplus  ───────────────────────────────────────────────────
+# ── acces au vault pour le back  ───────────────────────────────────────────────────
 
 resource "azurerm_key_vault_access_policy" "app_service" {
   key_vault_id = module.keyvault.kv_id
@@ -143,4 +143,11 @@ resource "azurerm_key_vault_access_policy" "app_service" {
   object_id    = module.back.identity_principal_id
 
   secret_permissions = ["Get", "List"]
+}
+
+# ── Rôle Storage Blob Data Contributor pour l'App Service sur le compte de stockage ─────
+resource "azurerm_role_assignment" "app_service_storage" {
+  scope                = module.storage.storage_id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = module.back.identity_principal_id
 }
