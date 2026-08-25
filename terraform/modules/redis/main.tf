@@ -26,7 +26,7 @@ resource "azurerm_managed_redis" "redis" {
 
 # Zone DNS privée pour Managed Redis
 resource "azurerm_private_dns_zone" "redis" {
-  name                = "privatelink.redis.cache.azure.net"
+  name                = "privatelink.redis.azure.net"
   resource_group_name = var.resource_group_name
 }
 
