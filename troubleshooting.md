@@ -199,4 +199,7 @@ az webapp config appsettings set --name back-sbaivloann-bilan --resource-group l
              logging.level.org.hibernate.SQL=DEBUG \
              logging.level.com.alderichoarau.azurequiz=DEBUG
 az webapp restart --name back-sbaivloann-bilan --resource-group lzniberRG
+
+# Pour suivre les logs
+az webapp log tail --name back-sbaivloann-bilan --resource-group lzniberRG
 ```
