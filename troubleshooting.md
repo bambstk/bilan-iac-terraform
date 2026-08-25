@@ -130,15 +130,37 @@ Ce document résume les principaux problèmes rencontrés et leurs solutions lor
 **Problème** : L’authentification par clé d’accès était désactivée sur Azure Managed Redis.  
 **Solution** : Activer `access_keys_authentication_enabled = true` dans le bloc `default_database` de la ressource `azurerm_managed_redis`, exporter `primary_access_key`, et l’injecter dans `app_settings` du backend.
 
-### 4.5. Erreur 500 persistante sur `/api/certifications` (non résolue à ce jour)
+### 4.5. Erreur 500 persistante sur `/api/certifications`
 **Symptôme** : Le backend démarre correctement, se connecte à PostgreSQL et Redis, mais l’endpoint `/api/certifications` renvoie une erreur 500.  
 **Cause probable** : Exception applicative non capturée (peut être une erreur SQL, un problème de sérialisation JSON, ou un souci avec le cache Redis).  
-**Pistes** :
-- Activer `logging.level.org.springframework.data.redis=DEBUG` et `logging.level.org.springframework.cache=DEBUG`.
-- Récupérer les logs applicatifs (via `az webapp log tail` ou SSH dans `/home/LogFiles/`).
-- Tester l’API avec `curl` pour isoler la réponse.
-- Vérifier les données en base (tables et contenu).
-- Vérifier la connexion Redis avec `nc` ou `redis-cli`.
+#### 4.5.1 Azure Managed Redis : erreur `RedisConnectionFailureException: Unable to connect to Redis`
+
+**Symptôme** : Le backend démarre, se connecte à PostgreSQL, mais l'endpoint `/api/certifications` renvoie une erreur 500 avec dans les logs :
+
+```org.springframework.data.redis.RedisConnectionFailureException: Unable to connect to Redis```
+
+
+
+**Cause** : La zone DNS privée utilisée pour le Private Endpoint de Redis était incorrecte.  
+Pour **Azure Managed Redis** (Redis Enterprise), la zone DNS privée attendue est :
+
+- `privatelink.redis.azure.net`
+
+Or, dans le module Terraform, on avait utilisé :
+
+- `privatelink.redis.cache.azure.net`  
+  → c’est la zone pour **Azure Cache for Redis classique**, pas pour Managed Redis.
+
+Le backend résolvait donc le nom public de Redis, inaccessible car `public_network_access = "Disabled"`.
+
+**Solution** : Modifier `modules/redis/main.tf` :
+
+```hcl
+resource "azurerm_private_dns_zone" "redis" {
+  name                = "privatelink.redis.azure.net"   # et non redis.cache.azure.net
+  resource_group_name = var.resource_group_name
+}
+```
 
 ---
 
@@ -168,3 +190,13 @@ az redisenterprise database list-keys --cluster-name redis-sbaivloann-bilan --re
 
 # GitHub API
 curl -s https://api.github.com/repos/<org>/<repo> | jq '.id'
+
+# Activer des logs DEBUG supplémentaires
+# Pour Spring Data Redis, le cache, Hibernate SQL et le package applicatif :
+az webapp config appsettings set --name back-sbaivloann-bilan --resource-group lzniberRG \
+  --settings logging.level.org.springframework.data.redis=DEBUG \
+             logging.level.org.springframework.cache=DEBUG \
+             logging.level.org.hibernate.SQL=DEBUG \
+             logging.level.com.alderichoarau.azurequiz=DEBUG
+az webapp restart --name back-sbaivloann-bilan --resource-group lzniberRG
+```
