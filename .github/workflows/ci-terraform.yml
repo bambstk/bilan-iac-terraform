@@ -30,7 +30,7 @@ jobs:
           terraform_version: '>=1.9'
 
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -backend=false
 
       - name: Terraform Format Check
         run: terraform fmt -check -diff
