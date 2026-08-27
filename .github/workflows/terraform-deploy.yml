@@ -38,6 +38,7 @@ jobs:
         run: terraform init
 
       - name: Terraform Validate
+        if: inputs.action == 'plan' || inputs.action == 'apply'
         run: terraform validate
 
       - name: Terraform Plan
