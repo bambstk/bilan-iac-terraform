@@ -40,7 +40,6 @@ module "front" {
 
   owner               = var.owner
   resource_group_name = data.azurerm_resource_group.rg.name
-  location            = var.location
   kv_id               = module.keyvault.kv_id
   tags                = merge(local.tags, { component = "front" })
 }
@@ -57,7 +56,6 @@ module "back" {
   service_plan_id       = module.network.backend_plan_id
   integration_subnet_id = module.network.integration_subnet_id
   db_host               = module.postgresql.psql_fqdn
-  kv_id                 = module.keyvault.kv_id
   frontend_url          = module.front.front_default_hostname
   administrator_login   = var.administrator_login
   redis_hostname        = module.redis.redis_hostname
