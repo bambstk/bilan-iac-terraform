@@ -8,6 +8,7 @@ on:
         required: true
         type: choice
         options:
+          - plan
           - apply
           - destroy
 
@@ -40,7 +41,7 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan
-        id: plan
+        if: inputs.action == 'plan' || inputs.action == 'apply'
         run: |
             terraform plan -no-color -input=false -detailed-exitcode -out=tfplan
             exit_code=$?
