@@ -6,6 +6,7 @@ variable "location"              { type = string }
 variable "integration_subnet_id" { type = string }
 variable "frontend_url"          { type = string }
 variable "db_host"               { type = string }
+variable "kv_id"                 { type = string }
 variable "administrator_login"   { type = string }
 variable "kv_uri"                { type = string }
 variable "redis_hostname"        { type = string }
