@@ -3,6 +3,13 @@ name: Terraform Deploy
 on:
   workflow_dispatch:
     inputs:
+      environment:
+        description: 'Environnement cible'
+        required: true
+        type: choice
+        options:
+          - non-prod
+          - prod
       action:
         description: 'Action à exécuter'
         required: true
@@ -35,7 +42,7 @@ jobs:
           subscription-id: ${{ vars.SUBSCRIPTION_ID }}
     
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -backend-config=environments/${{ inputs.environment }}.backend.tf
 
       - name: Terraform Validate
         if: inputs.action == 'plan' || inputs.action == 'apply'

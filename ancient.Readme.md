@@ -58,3 +58,45 @@ dans le vrai .md je le mettrais proprement
 
 et pour me donner la permission de voir ce qu'il y a dans le vault (quand il a été crée par le service principal) :  
 ```az keyvault set-policy --name kv-sbaivloann-bilan-mou --object-id 0be1d50e-08f9-4990-af02-84aacbf5f6ed --secret-permissions get list```
+
+## BONUS !!! double environement github (flemme)
+
+### student c'est flingué
+
+déjà va falloir que je me crée un nouveau service principal sur cette sub, flemme, je vais essayer de retrouver les commandes que j'avais utilisé pour créer celui de simplongue.  
+j'ai mis du temps et je me suis dispersé sur d'autres sujets désolé, bon en gros j'ai fait :  
+`az ad app create --display-name bilan-iac-prod-buambinho` pour créer l'app service qui va contenir le service principal (c'est un vraiment un service principal ? en tout cas c'est une microsoft entra app)  
+normalement on peut voir l'AppId en sortie de commande, mais si besoin `az ad app list --display-name bilan-iac-prod-buambinho --query "[0].{appId:appId}"` avec en option `-o tsv` si on veut que ce soit plus joli  
+`az ad sp create --id <AppId>` pour créer le service principal  
+
+maintenant il me faut la subscription id, tenant id, et client id pour l'oidc, j'crois c'est pas trop compliqué de les cop sur le portail, mais j'aimerais bien les cop en cli, donc:  
+`az account show --query id -o tsv` montre l'id de la sub associé au compte au moment de faire la commande  
+`az account show --query tenantId -o tsv` pareil pour le tenant  
+et le clientID c'est le appId donc y a déjà la commande plus haut.
+
+j'ai l'habitude d'ajouter les identités federées via le portail azure en allant dans l'app service > gerer > certificats et secrets > infos d'id fedérés pour gitlab il faut cette nomenclature "emeteur: https://gitlab.com" et "valeur: project_path:<OWNER>/<REPO>:ref_type:branch:ref:main", et pour github c'est encore plus simple (il faut juste recuperer les id avec l'api github), donc je vais essayer le faire en CLI maintenant:  
+```bash
+az ad app federated-credential create \
+    --id <APP_ID> \
+    --parameters '{
+        "name": "NomDeLaCredential",
+        "issuer": "https://token.actions.githubusercontent.com",
+        "subject": "repo:<OWNER>/<REPO>:<TYPE>:<VALEUR>",
+        "audiences": ["api://AzureADTokenExchange"]
+    }'
+```  
+là je veux que ça login sur main en normal mais surtout dans l'environement qui s'appelle prod donc en subject il va me falloir (en plusieur commandes):  
+`repo:<OWNER>/<REPO>:ref:refs/heads/<BRANCHE>` et `repo:<OWNER>/<REPO>:environment:<ENV_NAME>` (pour un PR ce serait : `repo:<OWNER>/<REPO>:pull_request`)  
+il faut que j'ajoute l'environement su la sp de ma sub simplon aussi. (et pour chacun des repos, donc 9 fois en tout avec une petite modif à chaque fois....)  
+
+il faut aussi que je recrée le storage pour le state dans la sub student comme au début du md.  
+je sais pas c'est quoi cette nouvelle connerie à la mode chez azure, mais j'avais pas le droit de créer de stroage account en cli tant que j'avaias pas register ma sub student ?? c'est quoi cette histoire encore, toujours plus d'étape bizarres et qui ont l'air inutiles avec azure, ça saoule pas mal...  
+```bash
+user@OCCPC5CD90419JS /mnt/c/Users/Utilisateur/espace_de_travail/Bilan_iac_cd/bilan-iac-terraform  (main)$ az provider show --namespace Microsoft.Storage --query "registrationState"
+"NotRegistered"
+user@OCCPC5CD90419JS /mnt/c/Users/Utilisateur/espace_de_travail/Bilan_iac_cd/bilan-iac-terraform  (main)$ az provider register --namespace Microsoft.Storage
+Registering is still on-going. You can monitor using 'az provider show -n Microsoft.Storage'
+```  
+alors là azure student flingué de zinzin, pour trouvé les 5 locations où j'ai le droit de créer le storage, j'ai du srotir cette infame commande mdr  
+`az policy assignment list --subscription 49ac968d-5d1d-4bd8-8a34-fe14f0c7c253 --query "[?contains(policyDefinitionId, 'allowed-locations') || contains(displayName, 'Allowed')].[name, displayName, parameters]" -o json`  
+et j'ai du ajouter ` --sku Standard_LRS` à la création pcq par defaut ça mettait `Standard_RAGRS` et que c'est pas autorisé, bien chiant azure student, bref.
