@@ -40,12 +40,12 @@ resource "azurerm_linux_web_app" "back" {
       java_server         = "JAVA"
       java_server_version = "21"
       java_version        = "21"
-      health_check_path = "/actuator/health"
     }
     cors {
       allowed_origins     = ["https://${var.frontend_url}"]
       support_credentials = false
     }
+    health_check_path = "/actuator/health"
   }
 
   tags = var.tags
