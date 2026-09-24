@@ -1,0 +1,55 @@
+name: Checkov IaC Scan
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  checkov:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write  # nécessaire pour uploader le SARIF
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Run Checkov
+        id: checkov
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: terraform/
+          framework: terraform
+          output_format: sarif
+          output_file_path: checkov-results.sarif
+          soft_fail: false
+          compact: true
+          quiet: true
+
+      - name: Upload SARIF to GitHub Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: checkov-results.sarif
+          category: checkov
+
+      - name: Job Summary
+        if: always()
+        run: |
+          {
+            echo "## Checkov IaC Scan — Terraform"
+            echo ""
+            if [ -f checkov-results.sarif ]; then
+              echo "📎 Rapport SARIF uploadé dans l'onglet **Security** du repo."
+              echo ""
+              echo "Résumé par sévérité :"
+              echo '```'
+              jq -r '.runs[0].results | group_by(.level) | map({level: .[0].level, count: length}) | .[] | "\(.level): \(.count)"' checkov-results.sarif 2>/dev/null || echo "Impossible de parser le SARIF."
+              echo '```'
+            else
+              echo "Aucun rapport SARIF généré."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,25 @@
+name: trivy - IaC Misconfig
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  IaC_misconfig:
+    runs-on: ubuntu-latest
+    steps:
+
+      - uses: actions/checkout@v7
+
+      - name: Trivy IaC misconfig
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: 'config'
+          scan-ref: '.'
+          scanners: 'misconfig'
+          severity: 'HIGH,CRITICAL'
+          format: 'table'
+          exit-code: '1'
