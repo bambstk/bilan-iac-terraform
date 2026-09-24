@@ -23,12 +23,9 @@ jobs:
         with:
           directory: terraform/
           framework: terraform
-          # config_file: .checkov.yaml
+          config_file: .checkov.yaml
           output_format: sarif
           output_file_path: checkov-results.sarif
-          skip_check: >-
-            CKV_AZURE_222,CKV_AZURE_17,CKV_AZURE_136,CKV_AZURE_33,CKV_AZURE_206,
-            CKV2_AZURE_40,CKV2_AZURE_41,CKV2_AZURE_47,CKV2_AZURE_1,CKV2_AZURE_31,CKV2_AZURE_38
           soft_fail: false
           compact: true
           quiet: true
