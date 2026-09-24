@@ -1,0 +1,35 @@
+skip-check:
+  # Backend : accessible publiquement par conception (contrainte SWA linked backend)
+  # Mitigé par API key + CORS restreint
+  - CKV_AZURE_222
+
+  # Client certificates : pas nécessaires, l'API key fait l'authentification
+  - CKV_AZURE_17
+
+  # Geo-redundant backups : non disponibles dans le tier Burstable B1ms
+  - CKV_AZURE_136
+
+  # Queue logging : faux positif connu (provider azurerm v4 déprécie queue_properties)
+  # https://github.com/bridgecrewio/checkov/issues/7174
+  - CKV_AZURE_33
+
+  # LRS : suffisant pour un TP (GRS coûte plus cher)
+  - CKV_AZURE_206
+
+  # Shared Key : déjà mitigé par shared_access_key_enabled = false
+  - CKV2_AZURE_40
+
+  # SAS expiration policy : à définir une fois la politique d'équipe en place
+  - CKV2_AZURE_41
+
+  # Blob anonymous access : déjà mitigé par allow_nested_items_to_be_public = false
+  - CKV2_AZURE_47
+
+  # Customer Managed Key : hors scope TP (nécessite Key Vault + rotation)
+  - CKV2_AZURE_1
+
+  # NSG sur subnets : faux positif sur subnets délégués et Private Endpoints
+  - CKV2_AZURE_31
+
+  # j'ai pas envie de soft delete le blob
+  - CKV2_AZURE_38
