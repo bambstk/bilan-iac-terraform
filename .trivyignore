@@ -1,4 +1,4 @@
-# AVD-AZU-0013 : Key Vault network ACL
+AVD-AZU-0013 : Key Vault network ACL
 # Le Key Vault est accessible publiquement pour permettre à la CI GitHub Actions
 # d'écrire le secret postgres-admin-password via Terraform. Sans runner auto-hébergé
 # dans le VNet, restreindre l'accès public casserait le déploiement automatisé.

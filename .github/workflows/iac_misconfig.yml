@@ -24,4 +24,3 @@ jobs:
           trivyignores: '.trivyignore'
           format: 'table'
           exit-code: '1'
-          cache: false
