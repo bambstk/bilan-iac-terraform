@@ -1,4 +1,4 @@
-# AZU-0013 : Key Vault network ACL
+# AVD-AZU-0013 : Key Vault network ACL
 # Le Key Vault est accessible publiquement pour permettre à la CI GitHub Actions
 # d'écrire le secret postgres-admin-password via Terraform. Sans runner auto-hébergé
 # dans le VNet, restreindre l'accès public casserait le déploiement automatisé.
@@ -6,7 +6,7 @@
 # (RBAC) et par un Private Endpoint qui reste disponible pour l'App Service.
 # À durcir quand un runner auto-hébergé sera disponible.
 
-# AZU-0012 : Storage network rules
+# AVD-AZU-0012 : Storage network rules
 # Idem, l'App Service accède via Private Endpoint et managed identity.
 # L'ajout d'un network_rules avec default_action=Deny empêcherait temporairement
 # le provisioning initial depuis la CI. À restreindre post-TP.
